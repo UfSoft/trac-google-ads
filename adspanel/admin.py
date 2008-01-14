@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8
 # =============================================================================
-# $Id: admin.py 6 2008-01-14 13:06:00Z s0undt3ch $
+# $Id: admin.py 15 2008-01-14 15:39:38Z s0undt3ch $
 # =============================================================================
 #             $URL: http://devnull.ufsoft.org/svn/TracAdsPanel/trunk/adspanel/admin.py $
-# $LastChangedDate: 2008-01-14 13:06:00 +0000 (Mon, 14 Jan 2008) $
-#             $Rev: 6 $
+# $LastChangedDate: 2008-01-14 15:39:38 +0000 (Mon, 14 Jan 2008) $
+#             $Rev: 15 $
 #   $LastChangedBy: s0undt3ch $
 # =============================================================================
 # Copyright (C) 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
@@ -46,8 +46,7 @@ class AdsAdminPanel(Component):
             yield ('adspanel', 'Ads Panel', 'config', 'Configuration')
 
     def render_admin_panel(self, req, cat, page, path_info):
-        self._update_config()
-        if req.method == 'POST':
+        if req.method.lower() == 'post':
             self.config.set('adspanel', 'hide_for_authenticated',
                             req.args.get('hide_for_authenticated') in
                             _TRUE_VALUES)
@@ -59,13 +58,16 @@ class AdsAdminPanel(Component):
             cursor.execute('SELECT value FROM system WHERE name=%s',
                            ('adspanel.code',))
             if cursor.fetchone():
+                self.log.debug('Updating Ads HTML Code')
                 cursor.execute('UPDATE system SET value=%s WHERE name=%s',
-                               ('adspanel.code', code))
+                               (code, 'adspanel.code'))
             else:
+                self.log.debug('Inserting Ads HTML Code')
                 cursor.execute('INSERT INTO system (name,value) VALUES (%s,%s)',
                                ('adspanel.code', code))
 
             req.redirect(req.href.admin(cat, page))
+        self._update_config()
         return 'ads_admin.html', {'ads_options': self.options}
 
     # Internal methods
