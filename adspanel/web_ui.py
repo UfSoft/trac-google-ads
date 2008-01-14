@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8
 # =============================================================================
-# $Id: web_ui.py 6 2008-01-14 13:06:00Z s0undt3ch $
+# $Id: web_ui.py 20 2008-01-14 17:48:18Z s0undt3ch $
 # =============================================================================
 #             $URL: http://devnull.ufsoft.org/svn/TracAdsPanel/trunk/adspanel/web_ui.py $
-# $LastChangedDate: 2008-01-14 13:06:00 +0000 (Mon, 14 Jan 2008) $
-#             $Rev: 6 $
+# $LastChangedDate: 2008-01-14 17:48:18 +0000 (Mon, 14 Jan 2008) $
+#             $Rev: 20 $
 #   $LastChangedBy: s0undt3ch $
 # =============================================================================
 # Copyright (C) 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
@@ -30,19 +30,28 @@ class AdsPanel(Component):
 
     # ITemplateStreamFilter method
     def filter_stream(self, req, method, filename, stream, data):
-        if not req.path_info.startswith('/admin'):
-            # Don't show ads on admin pages
-            add_ctxtnav(
-                req,
-                tag.a('%s Ads' % \
-                      req.session.get('adspanel.state', 'hide').capitalize(),
-                      href=req.href.adspanel(req.session.get('adspanel.state',
-                                                             'hide')),
-                      class_="toggle_ads"
-                )
-            )
-        if self.dont_show_ads(req):
+        self.log.debug(req.session)
+        if req.path_info.startswith('/admin'):
+            # Don't even show the ads link on admin pages
             return stream
+
+        state = req.session.get('adspanel.state')
+        if state == 'hidden':
+            state = 'show'
+        elif state == 'shown':
+            state = 'hide'
+        add_ctxtnav(
+            req,
+            tag.a('%s Ads' % state.capitalize(),
+                  href=req.href.adspanel(state),
+                  class_="toggle_ads"
+            )
+        )
+
+        if self.dont_show_ads(req):
+            self.log.debug('Not displaying ads, returning stream')
+            return stream
+
         jscode = """\
 $(document).ready(function() {
     $('a.toggle_ads').show();
@@ -55,8 +64,6 @@ $(document).ready(function() {
         $.get('%s/'+state);
     });
 });""" % req.href.adspanel()
-        req.href.adspanel(req.session.get('adspanel.state', 'hide'))
-        code = self.config.get('adspanel', 'ads_code')
         cursor = self.env.get_db_cnx().cursor()
         cursor.execute('SELECT value FROM system WHERE name=%s',
                            ('adspanel.code',))
@@ -80,17 +87,15 @@ $(document).ready(function() {
     # IRequestHandler methods
     def match_request(self, req):
         if req.path_info == '/adspanel/hide':
-            req.args['adspanel.state'] = 'show'
+            req.args['adspanel.state'] = 'hidden'
             return True
         if req.path_info == '/adspanel/show':
-            req.args['adspanel.state'] = 'hide'
+            req.args['adspanel.state'] = 'shown'
             return True
         return False
 
     def process_request(self, req):
-#        print 'HEADERS:', req.get_header('X-Requested-With') # == 'XMLHttpRequest'
-#        print 'HEADERS:', req.get_header('Referer')
-        req.session['adspanel.state'] = req.args.get('adspanel.state', 'hide')
+        req.session['adspanel.state'] = req.args.get('adspanel.state', 'hidden')
         req.session.save()
         if req.get_header('X-Requested-With') == 'XMLHttpRequest':
             # This is an ajax request
@@ -103,15 +108,13 @@ $(document).ready(function() {
                 referer = None
             req.redirect(referer or self.env.abs_href())
 
-
     # Internal methods
 
     def dont_show_ads(self, req):
-        if req.path_info.startswith('/admin'):
-            # Don't show on Admin Pages
+        if req.session.get('adspanel.state') == 'hidden':
             return True
-        if req.session.get('adspanel.state', 'hide') == 'show':
-            return True
+        elif req.session.get('adspanel.state') == 'shown':
+            return False
         elif (req.authname and req.authname != 'anonymous'):
             if self.config.getbool('adspanel', 'hide_for_authenticated', False):
                 return True
