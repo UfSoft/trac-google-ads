@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8
 # =============================================================================
-# $Id: web_ui.py 20 2008-01-14 17:48:18Z s0undt3ch $
+# $Id: web_ui.py 26 2008-01-14 17:55:31Z s0undt3ch $
 # =============================================================================
 #             $URL: http://devnull.ufsoft.org/svn/TracAdsPanel/trunk/adspanel/web_ui.py $
-# $LastChangedDate: 2008-01-14 17:48:18 +0000 (Mon, 14 Jan 2008) $
-#             $Rev: 20 $
+# $LastChangedDate: 2008-01-14 17:55:31 +0000 (Mon, 14 Jan 2008) $
+#             $Rev: 26 $
 #   $LastChangedBy: s0undt3ch $
 # =============================================================================
 # Copyright (C) 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
@@ -35,7 +35,7 @@ class AdsPanel(Component):
             # Don't even show the ads link on admin pages
             return stream
 
-        state = req.session.get('adspanel.state')
+        state = req.session.get('adspanel.state', 'shown')
         if state == 'hidden':
             state = 'show'
         elif state == 'shown':
