@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8
 # =============================================================================
-# $Id: admin.py 15 2008-01-14 15:39:38Z s0undt3ch $
+# $Id: admin.py 22 2008-01-14 17:49:58Z s0undt3ch $
 # =============================================================================
 #             $URL: http://devnull.ufsoft.org/svn/TracAdsPanel/trunk/adspanel/admin.py $
-# $LastChangedDate: 2008-01-14 15:39:38 +0000 (Mon, 14 Jan 2008) $
-#             $Rev: 15 $
+# $LastChangedDate: 2008-01-14 17:49:58 +0000 (Mon, 14 Jan 2008) $
+#             $Rev: 22 $
 #   $LastChangedBy: s0undt3ch $
 # =============================================================================
 # Copyright (C) 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
@@ -81,7 +81,7 @@ class AdsAdminPanel(Component):
             elif option.name == 'ads_code':
                 # Still get the Option to get __doc__ from it
                 value = self.config.get('adspanel', option.name, option.default)
-            option.value = value
+            option.value = str(value).lower()
             self.options[option.name] = option
 
         cursor = self.env.get_db_cnx().cursor()
