@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8
 # =============================================================================
-# $Id: admin.py 3 2008-01-13 15:16:11Z s0undt3ch $
+# $Id: admin.py 6 2008-01-14 13:06:00Z s0undt3ch $
 # =============================================================================
 #             $URL: http://devnull.ufsoft.org/svn/TracAdsPanel/trunk/adspanel/admin.py $
-# $LastChangedDate: 2008-01-13 15:16:11 +0000 (Sun, 13 Jan 2008) $
-#             $Rev: 3 $
+# $LastChangedDate: 2008-01-14 13:06:00 +0000 (Mon, 14 Jan 2008) $
+#             $Rev: 6 $
 #   $LastChangedBy: s0undt3ch $
 # =============================================================================
 # Copyright (C) 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
@@ -17,6 +17,7 @@ from trac.core import *
 from trac.web.chrome import ITemplateProvider
 from trac.admin import IAdminPanelProvider
 from trac.config import Option, BoolOption, _TRUE_VALUES
+from trac.util.text import unicode_unquote
 from pkg_resources import resource_filename
 
 
@@ -52,10 +53,18 @@ class AdsAdminPanel(Component):
                             _TRUE_VALUES)
             self.config.set('adspanel', 'store_in_session',
                             req.args.get('store_in_session') in _TRUE_VALUES)
-            self.config.set('adspanel', 'ads_code',
-                            req.args.get('ads_code'))
-
             self.config.save()
+            code = req.args.get('ads_code')
+            cursor = self.env.get_db_cnx().cursor()
+            cursor.execute('SELECT value FROM system WHERE name=%s',
+                           ('adspanel.code',))
+            if cursor.fetchone():
+                cursor.execute('UPDATE system SET value=%s WHERE name=%s',
+                               ('adspanel.code', code))
+            else:
+                cursor.execute('INSERT INTO system (name,value) VALUES (%s,%s)',
+                               ('adspanel.code', code))
+
             req.redirect(req.href.admin(cat, page))
         return 'ads_admin.html', {'ads_options': self.options}
 
@@ -68,8 +77,17 @@ class AdsAdminPanel(Component):
                 value = self.config.getbool('adspanel', option.name,
                                             option.default)
             elif option.name == 'ads_code':
+                # Still get the Option to get __doc__ from it
                 value = self.config.get('adspanel', option.name, option.default)
             option.value = value
             self.options[option.name] = option
 
-            print option.__dict__
+        cursor = self.env.get_db_cnx().cursor()
+        cursor.execute('SELECT value FROM system WHERE name=%s',
+                       ('adspanel.code',))
+        code = cursor.fetchone()
+        if code:
+            code = unicode_unquote(code[0])
+        else:
+            code = ''
+        self.options['ads_code'].value = code

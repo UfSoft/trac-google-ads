@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8
 # =============================================================================
-# $Id: web_ui.py 3 2008-01-13 15:16:11Z s0undt3ch $
+# $Id: web_ui.py 6 2008-01-14 13:06:00Z s0undt3ch $
 # =============================================================================
 #             $URL: http://devnull.ufsoft.org/svn/TracAdsPanel/trunk/adspanel/web_ui.py $
-# $LastChangedDate: 2008-01-13 15:16:11 +0000 (Sun, 13 Jan 2008) $
-#             $Rev: 3 $
+# $LastChangedDate: 2008-01-14 13:06:00 +0000 (Mon, 14 Jan 2008) $
+#             $Rev: 6 $
 #   $LastChangedBy: s0undt3ch $
 # =============================================================================
 # Copyright (C) 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
@@ -18,6 +18,7 @@ from trac.config import Option
 from trac.web.api import ITemplateStreamFilter
 from trac.web.chrome import add_ctxtnav
 from trac.web import HTTPNotFound, IRequestHandler
+from trac.util.text import unicode_unquote
 from genshi.builder import tag
 from genshi.core import Markup
 from genshi.filters.transform import Transformer, StreamBuffer
@@ -29,10 +30,17 @@ class AdsPanel(Component):
 
     # ITemplateStreamFilter method
     def filter_stream(self, req, method, filename, stream, data):
-        add_ctxtnav(req, tag.a('%s Ads' % req.session.get('adspanel.state', 'hide').capitalize(),
-                               href=req.href.adspanel(req.session.get('adspanel.state', 'hide'))
-                                                      , class_="toggle_ads")
-                               ) #style="display:none;"))
+        if not req.path_info.startswith('/admin'):
+            # Don't show ads on admin pages
+            add_ctxtnav(
+                req,
+                tag.a('%s Ads' % \
+                      req.session.get('adspanel.state', 'hide').capitalize(),
+                      href=req.href.adspanel(req.session.get('adspanel.state',
+                                                             'hide')),
+                      class_="toggle_ads"
+                )
+            )
         if self.dont_show_ads(req):
             return stream
         jscode = """\
@@ -48,13 +56,23 @@ $(document).ready(function() {
     });
 });""" % req.href.adspanel()
         req.href.adspanel(req.session.get('adspanel.state', 'hide'))
+        code = self.config.get('adspanel', 'ads_code')
+        cursor = self.env.get_db_cnx().cursor()
+        cursor.execute('SELECT value FROM system WHERE name=%s',
+                           ('adspanel.code',))
+        code = cursor.fetchone()
+        if code:
+            code = unicode_unquote(code[0])
+        else:
+            code = ''
         streambuffer = StreamBuffer()
         return stream | Transformer('//div[@id="main"]/* | '
                                     '//div[@id="main"]/text()') \
             .cut(streambuffer).end() \
             .select('//div[@id="main"]').prepend(tag.table(tag.tr(
-                tag.td(streambuffer, width="100%", style="vertical-align: top;") +
-                tag.td(Markup(self.config.get('adspanel', 'ads_code')),
+                tag.td(streambuffer, width="100%",
+                       style="vertical-align: top;") +
+                tag.td(Markup(code),
                        id="ads_panel", style="vertical-align: top;")
             ), width='100%')+ tag.script(jscode, type="text/javascript")
         )
@@ -70,8 +88,8 @@ $(document).ready(function() {
         return False
 
     def process_request(self, req):
-        print 'HEADERS:', req.get_header('X-Requested-With') # == 'XMLHttpRequest'
-        print 'HEADERS:', req.get_header('Referer')
+#        print 'HEADERS:', req.get_header('X-Requested-With') # == 'XMLHttpRequest'
+#        print 'HEADERS:', req.get_header('Referer')
         req.session['adspanel.state'] = req.args.get('adspanel.state', 'hide')
         req.session.save()
         if req.get_header('X-Requested-With') == 'XMLHttpRequest':
@@ -79,6 +97,7 @@ $(document).ready(function() {
             req.send_response(code=200)
             req.end_headers()
         else:
+            # This is a normal request, redirect user to last page
             referer = req.get_header('Referer')
             if referer and not referer.startswith(req.base_url):
                 referer = None
@@ -88,8 +107,10 @@ $(document).ready(function() {
     # Internal methods
 
     def dont_show_ads(self, req):
-        print req.session
-        if req.session.get('adspanel.state', 'show') == 'show':
+        if req.path_info.startswith('/admin'):
+            # Don't show on Admin Pages
+            return True
+        if req.session.get('adspanel.state', 'hide') == 'show':
             return True
         elif (req.authname and req.authname != 'anonymous'):
             if self.config.getbool('adspanel', 'hide_for_authenticated', False):
