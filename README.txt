@@ -1,7 +1,7 @@
 TracAdsPlugin
 =============
 
-TracAdsPlugin is of course a trac_ plugin designed to display ads on your
+TracAdsPlugin_ is of course a trac_ plugin designed to display ads on your
 trac_ environment.
 
 The main feature of the plugin is that it allows the user to persistently_
@@ -23,7 +23,10 @@ And then enabling it:
 
 And that's it!
 
-Now, all you have to do is to go to the administration and under **Ads Panel** you have a configuration link to setup the plugin.
+Now, all you have to do is to go to the administration and under **Ads Panel**
+you have a configuration link to setup the plugin.
+
+**Note**: For up-to-date documentation please visit TracAdsPlugin_'s site.
 
 ~~~~
 
@@ -32,3 +35,4 @@ Now, all you have to do is to go to the administration and under **Ads Panel** y
                   choice to display them again*.
 
 .. _trac: http://trac.edgewall.org
+.. _TracAdsPlugin: http://devnull.ufsoft.org/wiki/TracAdsPanel
