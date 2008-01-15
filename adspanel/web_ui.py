@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8
 # =============================================================================
-# $Id: web_ui.py 26 2008-01-14 17:55:31Z s0undt3ch $
+# $Id: web_ui.py 30 2008-01-15 15:52:02Z s0undt3ch $
 # =============================================================================
 #             $URL: http://devnull.ufsoft.org/svn/TracAdsPanel/trunk/adspanel/web_ui.py $
-# $LastChangedDate: 2008-01-14 17:55:31 +0000 (Mon, 14 Jan 2008) $
-#             $Rev: 26 $
+# $LastChangedDate: 2008-01-15 15:52:02 +0000 (Tue, 15 Jan 2008) $
+#             $Rev: 30 $
 #   $LastChangedBy: s0undt3ch $
 # =============================================================================
 # Copyright (C) 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
@@ -55,7 +55,7 @@ class AdsPanel(Component):
         jscode = """\
 $(document).ready(function() {
     $('a.toggle_ads').show();
-    $('a.toggle_ads').attr('href', '#');
+    $('a.toggle_ads').attr('href', 'javascript:;');
     $('a.toggle_ads').bind('click', function() {
         var state = $('#ads_panel').is(':hidden') ? 'show' : 'hide';
         var name = $('#ads_panel').is(':hidden') ? 'Hide Ads' : 'Show Ads';
