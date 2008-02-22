@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8
 # =============================================================================
-# $Id: web_ui.py 30 2008-01-15 15:52:02Z s0undt3ch $
+# $Id: web_ui.py 56 2008-02-22 23:44:54Z s0undt3ch $
 # =============================================================================
 #             $URL: http://devnull.ufsoft.org/svn/TracAdsPanel/trunk/adspanel/web_ui.py $
-# $LastChangedDate: 2008-01-15 15:52:02 +0000 (Tue, 15 Jan 2008) $
-#             $Rev: 30 $
+# $LastChangedDate: 2008-02-22 23:44:54 +0000 (Fri, 22 Feb 2008) $
+#             $Rev: 56 $
 #   $LastChangedBy: s0undt3ch $
 # =============================================================================
 # Copyright (C) 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
@@ -53,15 +53,15 @@ class AdsPanel(Component):
             return stream
 
         jscode = """\
-$(document).ready(function() {
-    $('a.toggle_ads').show();
-    $('a.toggle_ads').attr('href', 'javascript:;');
-    $('a.toggle_ads').bind('click', function() {
-        var state = $('#ads_panel').is(':hidden') ? 'show' : 'hide';
-        var name = $('#ads_panel').is(':hidden') ? 'Hide Ads' : 'Show Ads';
-        $(this).html(name);
-        $('#ads_panel').animate({opacity: state}, 200);
-        $.get('%s/'+state);
+jQuery(document).ready(function() {
+    jQuery('a.toggle_ads').show();
+    jQuery('a.toggle_ads').attr('href', 'javascript:;');
+    jQuery('a.toggle_ads').bind('click', function() {
+        var state = jQuery('#ads_panel').is(':hidden') ? 'show' : 'hide';
+        var name = jQuery('#ads_panel').is(':hidden') ? 'Hide Ads' : 'Show Ads';
+        jQuery(this).html(name);
+        jQuery('#ads_panel').animate({opacity: state}, 200);
+        jQuery.get('%s/'+state);
     });
 });""" % req.href.adspanel()
         cursor = self.env.get_db_cnx().cursor()
