@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8
 # =============================================================================
-# $Id: web_ui.py 56 2008-02-22 23:44:54Z s0undt3ch $
+# $Id: web_ui.py 102 2008-05-15 15:50:06Z s0undt3ch $
 # =============================================================================
 #             $URL: http://devnull.ufsoft.org/svn/TracAdsPanel/trunk/adspanel/web_ui.py $
-# $LastChangedDate: 2008-02-22 23:44:54 +0000 (Fri, 22 Feb 2008) $
-#             $Rev: 56 $
+# $LastChangedDate: 2008-05-15 16:50:06 +0100 (Thu, 15 May 2008) $
+#             $Rev: 102 $
 #   $LastChangedBy: s0undt3ch $
 # =============================================================================
 # Copyright (C) 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
@@ -64,7 +64,8 @@ jQuery(document).ready(function() {
         jQuery.get('%s/'+state);
     });
 });""" % req.href.adspanel()
-        cursor = self.env.get_db_cnx().cursor()
+        db = self.env.get_db_cnx()
+        cursor = db.cursor()
         cursor.execute('SELECT value FROM system WHERE name=%s',
                            ('adspanel.code',))
         code = cursor.fetchone()
