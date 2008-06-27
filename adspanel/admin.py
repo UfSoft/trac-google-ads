@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8
 # =============================================================================
-# $Id: admin.py 22 2008-01-14 17:49:58Z s0undt3ch $
+# $Id: admin.py 105 2008-06-27 14:55:41Z s0undt3ch $
 # =============================================================================
 #             $URL: http://devnull.ufsoft.org/svn/TracAdsPanel/trunk/adspanel/admin.py $
-# $LastChangedDate: 2008-01-14 17:49:58 +0000 (Mon, 14 Jan 2008) $
-#             $Rev: 22 $
+# $LastChangedDate: 2008-06-27 15:55:41 +0100 (Fri, 27 Jun 2008) $
+#             $Rev: 105 $
 #   $LastChangedBy: s0undt3ch $
 # =============================================================================
 # Copyright (C) 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
@@ -84,7 +84,8 @@ class AdsAdminPanel(Component):
             option.value = str(value).lower()
             self.options[option.name] = option
 
-        cursor = self.env.get_db_cnx().cursor()
+        db = self.env.get_db_cnx()
+        cursor = db.cursor()
         cursor.execute('SELECT value FROM system WHERE name=%s',
                        ('adspanel.code',))
         code = cursor.fetchone()
