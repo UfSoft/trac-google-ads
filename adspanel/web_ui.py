@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8
 # =============================================================================
-# $Id: web_ui.py 102 2008-05-15 15:50:06Z s0undt3ch $
+# $Id: web_ui.py 106 2008-06-27 15:15:25Z s0undt3ch $
 # =============================================================================
 #             $URL: http://devnull.ufsoft.org/svn/TracAdsPanel/trunk/adspanel/web_ui.py $
-# $LastChangedDate: 2008-05-15 16:50:06 +0100 (Thu, 15 May 2008) $
-#             $Rev: 102 $
+# $LastChangedDate: 2008-06-27 16:15:25 +0100 (Fri, 27 Jun 2008) $
+#             $Rev: 106 $
 #   $LastChangedBy: s0undt3ch $
 # =============================================================================
 # Copyright (C) 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
@@ -40,6 +40,17 @@ class AdsPanel(Component):
             state = 'show'
         elif state == 'shown':
             state = 'hide'
+
+        db = self.env.get_db_cnx()
+        cursor = db.cursor()
+        cursor.execute('SELECT value FROM system WHERE name=%s',
+                           ('adspanel.code',))
+        code = cursor.fetchone()
+        if code:
+            code = unicode_unquote(code[0])
+        else:
+            return stream
+
         add_ctxtnav(
             req,
             tag.a('%s Ads' % state.capitalize(),
@@ -64,15 +75,6 @@ jQuery(document).ready(function() {
         jQuery.get('%s/'+state);
     });
 });""" % req.href.adspanel()
-        db = self.env.get_db_cnx()
-        cursor = db.cursor()
-        cursor.execute('SELECT value FROM system WHERE name=%s',
-                           ('adspanel.code',))
-        code = cursor.fetchone()
-        if code:
-            code = unicode_unquote(code[0])
-        else:
-            code = ''
         streambuffer = StreamBuffer()
         return stream | Transformer('//div[@id="main"]/* | '
                                     '//div[@id="main"]/text()') \
