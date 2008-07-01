@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8
 # =============================================================================
-# $Id: web_ui.py 106 2008-06-27 15:15:25Z s0undt3ch $
+# $Id: web_ui.py 107 2008-07-01 21:11:48Z s0undt3ch $
 # =============================================================================
 #             $URL: http://devnull.ufsoft.org/svn/TracAdsPanel/trunk/adspanel/web_ui.py $
-# $LastChangedDate: 2008-06-27 16:15:25 +0100 (Fri, 27 Jun 2008) $
-#             $Rev: 106 $
+# $LastChangedDate: 2008-07-01 22:11:48 +0100 (Tue, 01 Jul 2008) $
+#             $Rev: 107 $
 #   $LastChangedBy: s0undt3ch $
 # =============================================================================
 # Copyright (C) 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
@@ -78,7 +78,7 @@ jQuery(document).ready(function() {
         streambuffer = StreamBuffer()
         return stream | Transformer('//div[@id="main"]/* | '
                                     '//div[@id="main"]/text()') \
-            .cut(streambuffer).end() \
+            .cut(streambuffer, accumulate=True).buffer().end() \
             .select('//div[@id="main"]').prepend(tag.table(tag.tr(
                 tag.td(streambuffer, width="100%",
                        style="vertical-align: top;") +
