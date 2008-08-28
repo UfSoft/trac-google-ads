@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8
 # =============================================================================
-# $Id: web_ui.py 107 2008-07-01 21:11:48Z s0undt3ch $
+# $Id: web_ui.py 114 2008-08-28 17:18:13Z s0undt3ch $
 # =============================================================================
 #             $URL: http://devnull.ufsoft.org/svn/TracAdsPanel/trunk/adspanel/web_ui.py $
-# $LastChangedDate: 2008-07-01 22:11:48 +0100 (Tue, 01 Jul 2008) $
-#             $Rev: 107 $
+# $LastChangedDate: 2008-08-28 18:18:13 +0100 (Thu, 28 Aug 2008) $
+#             $Rev: 114 $
 #   $LastChangedBy: s0undt3ch $
 # =============================================================================
 # Copyright (C) 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
@@ -30,7 +30,7 @@ class AdsPanel(Component):
 
     # ITemplateStreamFilter method
     def filter_stream(self, req, method, filename, stream, data):
-        self.log.debug(req.session)
+        self.log.debug('AdsPanel Stream Filter: %s', req.session)
         if req.path_info.startswith('/admin'):
             # Don't even show the ads link on admin pages
             return stream

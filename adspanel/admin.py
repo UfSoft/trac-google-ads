@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8
 # =============================================================================
-# $Id: admin.py 105 2008-06-27 14:55:41Z s0undt3ch $
+# $Id: admin.py 114 2008-08-28 17:18:13Z s0undt3ch $
 # =============================================================================
 #             $URL: http://devnull.ufsoft.org/svn/TracAdsPanel/trunk/adspanel/admin.py $
-# $LastChangedDate: 2008-06-27 15:55:41 +0100 (Fri, 27 Jun 2008) $
-#             $Rev: 105 $
+# $LastChangedDate: 2008-08-28 18:18:13 +0100 (Thu, 28 Aug 2008) $
+#             $Rev: 114 $
 #   $LastChangedBy: s0undt3ch $
 # =============================================================================
 # Copyright (C) 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
@@ -46,7 +46,8 @@ class AdsAdminPanel(Component):
             yield ('adspanel', 'Ads Panel', 'config', 'Configuration')
 
     def render_admin_panel(self, req, cat, page, path_info):
-        if req.method.lower() == 'post':
+        self.log.debug('Saving Ads Panel Options')
+        if req.method == 'POST':
             self.config.set('adspanel', 'hide_for_authenticated',
                             req.args.get('hide_for_authenticated') in
                             _TRUE_VALUES)
@@ -54,7 +55,8 @@ class AdsAdminPanel(Component):
                             req.args.get('store_in_session') in _TRUE_VALUES)
             self.config.save()
             code = req.args.get('ads_code')
-            cursor = self.env.get_db_cnx().cursor()
+            db = self.env.get_db_cnx()
+            cursor = db.cursor()
             cursor.execute('SELECT value FROM system WHERE name=%s',
                            ('adspanel.code',))
             if cursor.fetchone():
@@ -65,6 +67,7 @@ class AdsAdminPanel(Component):
                 self.log.debug('Inserting Ads HTML Code')
                 cursor.execute('INSERT INTO system (name,value) VALUES (%s,%s)',
                                ('adspanel.code', code))
+            db.commit()
 
             req.redirect(req.href.admin(cat, page))
         self._update_config()
