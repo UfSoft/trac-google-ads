@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8
 # =============================================================================
-# $Id: web_ui.py 114 2008-08-28 17:18:13Z s0undt3ch $
+# $Id: web_ui.py 116 2008-08-28 17:57:02Z s0undt3ch $
 # =============================================================================
 #             $URL: http://devnull.ufsoft.org/svn/TracAdsPanel/trunk/adspanel/web_ui.py $
-# $LastChangedDate: 2008-08-28 18:18:13 +0100 (Thu, 28 Aug 2008) $
-#             $Rev: 114 $
+# $LastChangedDate: 2008-08-28 18:57:02 +0100 (Thu, 28 Aug 2008) $
+#             $Rev: 116 $
 #   $LastChangedBy: s0undt3ch $
 # =============================================================================
 # Copyright (C) 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
@@ -44,7 +44,7 @@ class AdsPanel(Component):
         db = self.env.get_db_cnx()
         cursor = db.cursor()
         cursor.execute('SELECT value FROM system WHERE name=%s',
-                           ('adspanel.code',))
+                       ('adspanel.code',))
         code = cursor.fetchone()
         if code:
             code = unicode_unquote(code[0])

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8
 # =============================================================================
-# $Id: admin.py 114 2008-08-28 17:18:13Z s0undt3ch $
+# $Id: admin.py 116 2008-08-28 17:57:02Z s0undt3ch $
 # =============================================================================
 #             $URL: http://devnull.ufsoft.org/svn/TracAdsPanel/trunk/adspanel/admin.py $
-# $LastChangedDate: 2008-08-28 18:18:13 +0100 (Thu, 28 Aug 2008) $
-#             $Rev: 114 $
+# $LastChangedDate: 2008-08-28 18:57:02 +0100 (Thu, 28 Aug 2008) $
+#             $Rev: 116 $
 #   $LastChangedBy: s0undt3ch $
 # =============================================================================
 # Copyright (C) 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
@@ -51,8 +51,6 @@ class AdsAdminPanel(Component):
             self.config.set('adspanel', 'hide_for_authenticated',
                             req.args.get('hide_for_authenticated') in
                             _TRUE_VALUES)
-            self.config.set('adspanel', 'store_in_session',
-                            req.args.get('store_in_session') in _TRUE_VALUES)
             self.config.save()
             code = req.args.get('ads_code')
             db = self.env.get_db_cnx()
@@ -77,23 +75,19 @@ class AdsAdminPanel(Component):
     def _update_config(self):
         for option in [option for option in Option.registry.values()
                        if option.section == 'adspanel']:
-            value = ''
-            if option.name in ('hide_for_authenticated', 'store_in_session'):
-                value = self.config.getbool('adspanel', option.name,
-                                            option.default)
+            if option.name == 'hide_for_authenticated':
+                option.value = self.config.getbool('adspanel', option.name,
+                                                   True)
             elif option.name == 'ads_code':
                 # Still get the Option to get __doc__ from it
-                value = self.config.get('adspanel', option.name, option.default)
-            option.value = str(value).lower()
+                db = self.env.get_db_cnx()
+                cursor = db.cursor()
+                cursor.execute('SELECT value FROM system WHERE name=%s',
+                               ('adspanel.code',))
+                code = cursor.fetchone()
+                if code:
+                    code = unicode_unquote(code[0])
+                else:
+                    code = ''
+                option.value = code
             self.options[option.name] = option
-
-        db = self.env.get_db_cnx()
-        cursor = db.cursor()
-        cursor.execute('SELECT value FROM system WHERE name=%s',
-                       ('adspanel.code',))
-        code = cursor.fetchone()
-        if code:
-            code = unicode_unquote(code[0])
-        else:
-            code = ''
-        self.options['ads_code'].value = code
