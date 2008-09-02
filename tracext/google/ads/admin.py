@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8
 # =============================================================================
-# $Id: admin.py 116 2008-08-28 17:57:02Z s0undt3ch $
+# $Id: admin.py 125 2008-09-02 01:57:56Z s0undt3ch $
 # =============================================================================
-#             $URL: http://devnull.ufsoft.org/svn/TracAdsPanel/trunk/adspanel/admin.py $
-# $LastChangedDate: 2008-08-28 18:57:02 +0100 (Thu, 28 Aug 2008) $
-#             $Rev: 116 $
+#             $URL: http://devnull.ufsoft.org/svn/TracAdsPanel/trunk/tracext/google/ads/admin.py $
+# $LastChangedDate: 2008-09-02 02:57:56 +0100 (Tue, 02 Sep 2008) $
+#             $Rev: 125 $
 #   $LastChangedBy: s0undt3ch $
 # =============================================================================
 # Copyright (C) 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
@@ -13,81 +13,70 @@
 # Please view LICENSE for additional licensing information.
 # =============================================================================
 
-from trac.core import *
-from trac.web.chrome import ITemplateProvider
+from trac.core import Component, implements
 from trac.admin import IAdminPanelProvider
-from trac.config import Option, BoolOption, _TRUE_VALUES
+from trac.config import Option,  _TRUE_VALUES
 from trac.util.text import unicode_unquote
-from pkg_resources import resource_filename
-
+from trac.web.chrome import add_stylesheet
 
 class AdsAdminPanel(Component):
-    implements(ITemplateProvider, IAdminPanelProvider)
+    implements(IAdminPanelProvider)
 
     def __init__(self):
         self.options = {}
 
-    # ITemplateProvider methods
-    def get_htdocs_dirs(self):
-        """Return the absolute path of a directory containing additional
-        static resources (such as images, style sheets, etc).
-        """
-        return []
-
-    def get_templates_dirs(self):
-        """Return the absolute path of the directory containing the provided
-        Genshi templates.
-        """
-        return [resource_filename(__name__, 'templates')]
-
     # IAdminPanelProvider methods
     def get_admin_panels(self, req):
         if req.perm.has_permission('TRAC_ADMIN'):
-            yield ('adspanel', 'Ads Panel', 'config', 'Configuration')
+            yield ('google', 'Google', 'ads', 'Ads')
 
     def render_admin_panel(self, req, cat, page, path_info):
-        self.log.debug('Saving Ads Panel Options')
+        add_stylesheet(req, 'googlesads/googleads.css')
+        self.log.debug('Saving Google Ads Options')
         if req.method == 'POST':
-            self.config.set('adspanel', 'hide_for_authenticated',
+            self.config.set('google.ads', 'hide_for_authenticated',
                             req.args.get('hide_for_authenticated') in
                             _TRUE_VALUES)
             self.config.save()
-            code = req.args.get('ads_code')
+            code = req.args.get('ads_html')
             db = self.env.get_db_cnx()
             cursor = db.cursor()
             cursor.execute('SELECT value FROM system WHERE name=%s',
-                           ('adspanel.code',))
+                           ('google.ads_html',))
             if cursor.fetchone():
                 self.log.debug('Updating Ads HTML Code')
                 cursor.execute('UPDATE system SET value=%s WHERE name=%s',
-                               (code, 'adspanel.code'))
+                               (code, 'google.ads_html'))
             else:
                 self.log.debug('Inserting Ads HTML Code')
                 cursor.execute('INSERT INTO system (name,value) VALUES (%s,%s)',
-                               ('adspanel.code', code))
+                               ('google.ads_html', code))
             db.commit()
 
             req.redirect(req.href.admin(cat, page))
         self._update_config()
-        return 'ads_admin.html', {'ads_options': self.options}
+        return 'adsense_ads_admin.html', {'ads_options': self.options}
 
     # Internal methods
     def _update_config(self):
         for option in [option for option in Option.registry.values()
-                       if option.section == 'adspanel']:
+                       if option.section == 'google.ads']:
             if option.name == 'hide_for_authenticated':
-                option.value = self.config.getbool('adspanel', option.name,
+                option.value = self.config.getbool('google.ads', option.name,
                                                    True)
-            elif option.name == 'ads_code':
+            elif option.name == 'ads_html':
                 # Still get the Option to get __doc__ from it
                 db = self.env.get_db_cnx()
                 cursor = db.cursor()
                 cursor.execute('SELECT value FROM system WHERE name=%s',
-                               ('adspanel.code',))
+                               ('google.ads_html',))
                 code = cursor.fetchone()
                 if code:
                     code = unicode_unquote(code[0])
                 else:
                     code = ''
                 option.value = code
+            else:
+                option.value = self.config.get('google.ads', option.name,
+                                               option.default)
             self.options[option.name] = option
