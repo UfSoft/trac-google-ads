@@ -41,7 +41,7 @@ If you wish to be on the bleeding edge and get the latest available code:
 
 .. sourcecode:: ini
 
-  hg clone http://google.ufsoft.org/hg/ads-dev/ TracGoogleAds
+  hg clone http://google.ufsoft.org/hg/ads/ TracGoogleAds
 
 
 **Note**: For up-to-date documentation please visit TracGoogleAds_'s site.
