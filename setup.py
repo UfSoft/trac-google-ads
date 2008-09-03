@@ -27,7 +27,7 @@ setup(name="TracGoogleAds",
       packages=['tracext', 'tracext.google', 'tracext.google.ads'],
       namespace_packages=['tracext', 'tracext.google'],
       package_data = {'tracext.google.ads': ['templates/*.html',
-                                             'htdocs/*.html']},
+                                             'htdocs/*.css']},
       include_package_data = True,
       keywords = "trac plugin google ads",
       entry_points = """
