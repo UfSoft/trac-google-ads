@@ -26,6 +26,24 @@ And that's it!
 Now, all you have to do is to go to the administration and under **Google**
 you have a **Ads** link to setup the plugin.
 
+Bugs and/or New Features
+------------------------
+
+Please submit bugs of new features to::
+
+  http://google.ufsoft.org/
+
+
+Source Code
+-----------
+
+If you wish to be on the bleeding edge and get the latest available code:
+
+.. sourcecode:: ini
+
+  hg clone http://google.ufsoft.org/hg/ads-dev/ TracGoogleAds
+
+
 **Note**: For up-to-date documentation please visit TracGoogleAds_'s site.
 
 ~~~~
