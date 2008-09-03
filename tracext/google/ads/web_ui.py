@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8 et
+# ==============================================================================
+# Copyright © 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
+#
+# Please view LICENSE for additional licensing information.
+# ==============================================================================
 
 from trac.core import Component, implements, TracError
 from trac.web.api import ITemplateStreamFilter
@@ -10,11 +15,12 @@ from genshi.builder import tag
 from genshi.core import Markup
 from genshi.filters.transform import Transformer, StreamBuffer
 
-class AdsenseAdsPanel(Component):
+class GoogleAdsPanel(Component):
     env = log = config = None # make pylint happy
     implements(ITemplateStreamFilter, IRequestHandler)
 
     def __init__(self):
+        Component.__init__(self)
         try:
             import adspanel
             if self.env.is_component_enabled(adspanel.web_ui.AdsPanel):
@@ -61,13 +67,13 @@ jQuery(document).ready(function() {
     jQuery('a.toggle_ads').show();
     jQuery('a.toggle_ads').attr('href', 'javascript:;');
     jQuery('a.toggle_ads').bind('click', function() {
-        var state = jQuery('#ads_panel').is(':hidden') ? 'show' : 'hide';
-        var name = jQuery('#ads_panel').is(':hidden') ? 'Hide Ads' : 'Show Ads';
+        var state = jQuery('#%(show_hide_id)s').is(':hidden') ? 'show' : 'hide';
+        var name = jQuery('#%(show_hide_id)s').is(':hidden') ? 'Hide Ads' : 'Show Ads';
         jQuery(this).html(name);
-        jQuery('#ads_panel').animate({opacity: state}, 200);
-        jQuery.get('%s/'+state);
+        jQuery('#%(show_hide_id)s').animate({opacity: state}, 200);
+        jQuery.get('%(href)s/'+state);
     });
-});""" % req.href.adspanel()
+});"""
         ads_div_id = self.config.get('google.ads', 'ads_div_id', 'main')
         if ads_div_id == 'main':
             streambuffer = StreamBuffer()
@@ -82,12 +88,18 @@ jQuery(document).ready(function() {
                                                    id="ads_panel",
                                                    style="vertical-align: top;")
                               ), width='100%'
-                    ) + tag.script(jscode, type="text/javascript")
+                    ) + tag.script(jscode % dict(href=req.href.adspanel(),
+                                                 show_hide_id='ads_panel'),
+                                   type="text/javascript")
                 )
         else:
             return stream | Transformer(
                 '//div[@id="%s"]/* | //div[@id="%s"]/text()' % (
-                ads_div_id, ads_div_id)).replace(Markup(code))
+                ads_div_id, ads_div_id)).replace(tag(
+                    Markup(code),
+                    tag.script(jscode % dict(href=req.href.adspanel(),
+                                             show_hide_id=ads_div_id),
+                               type="text/javascript")))
 
 
     # IRequestHandler methods

@@ -1,7 +1,7 @@
-TracAdsPlugin
+TracGoogleAds
 =============
 
-TracAdsPlugin_ is of course a trac_ plugin designed to display ads on your
+TracGoogleAds_ is of course a trac_ plugin designed to display ads on your
 trac_ environment.
 
 The main feature of the plugin is that it allows the user to persistently_
@@ -12,21 +12,21 @@ Installation
 ------------
 Installing the plugin is as easy as::
 
-  sudo easy_install TracAdsPlugin
+  sudo easy_install TracGoogleAds
 
 And then enabling it:
 
 .. sourcecode:: ini
 
   [components]
-  adsplugin.* = enabled
+  tracext.google.ads.* = enabled
 
 And that's it!
 
-Now, all you have to do is to go to the administration and under **Ads Panel**
-you have a configuration link to setup the plugin.
+Now, all you have to do is to go to the administration and under **Google**
+you have a **Ads** link to setup the plugin.
 
-**Note**: For up-to-date documentation please visit TracAdsPlugin_'s site.
+**Note**: For up-to-date documentation please visit TracGoogleAds_'s site.
 
 ~~~~
 
@@ -35,4 +35,4 @@ you have a configuration link to setup the plugin.
                   choice to display them again*.
 
 .. _trac: http://trac.edgewall.org
-.. _TracAdsPlugin: http://devnull.ufsoft.org/wiki/TracAdsPanel
+.. _TracGoogleAds: http://google.ufsoft.org/wiki/TracGoogleAds

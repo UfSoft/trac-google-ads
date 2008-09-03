@@ -1,5 +1,19 @@
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8 et
+# ==============================================================================
+# Copyright © 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
+#
+# Please view LICENSE for additional licensing information.
+# ==============================================================================
+
+__version__     = '0.2.0'
+__author__      = 'Pedro Algarvio'
+__email__       = 'ufs@ufsoft.org'
+__package__     = 'TracGoogleAds'
+__license__     = 'BSD'
+__url__         = 'http://google.ufsoft.org'
+__summary__     = 'Trac plugin designed to display ads on your Trac environment'
+
 
 import pkg_resources
 from trac.config import Option, BoolOption
@@ -10,9 +24,7 @@ from trac.web.chrome import ITemplateProvider
 # ==============================================================================
 # Google Ads Options
 # ==============================================================================
-
 class GoogleAdsOptions(Component):
-
     hide_for_authenticated = BoolOption(
         'google.ads', 'hide_for_authenticated', True,
         """Should the ads be hidden for authenticated users."""
@@ -32,10 +44,10 @@ class GoogleAdsOptions(Component):
         created where regular output apears on the left column and the ads on
         the right column."""
     )
-# ==============================================================================
-# Adsense4Trac Resources
-# ==============================================================================
 
+# ==============================================================================
+# Google Ads Resources
+# ==============================================================================
 class GoogleAdsResources(Component):
     implements(ITemplateProvider)
     # ITemplateProvider methods
@@ -52,9 +64,8 @@ class GoogleAdsResources(Component):
         yield pkg_resources.resource_filename(__name__, 'templates')
 
 # ==============================================================================
-# Trac Upgrade Code
+# Upgrade Code
 # ==============================================================================
-
 class GoogleComponentSetup(Component):
     env = config = log = None # make pylink happy
     implements(IEnvironmentSetupParticipant)

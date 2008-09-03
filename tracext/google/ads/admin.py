@@ -1,17 +1,10 @@
 # -*- coding: utf-8 -*-
-# vim: sw=4 ts=4 fenc=utf-8
-# =============================================================================
-# $Id: admin.py 125 2008-09-02 01:57:56Z s0undt3ch $
-# =============================================================================
-#             $URL: http://devnull.ufsoft.org/svn/TracAdsPanel/trunk/tracext/google/ads/admin.py $
-# $LastChangedDate: 2008-09-02 02:57:56 +0100 (Tue, 02 Sep 2008) $
-#             $Rev: 125 $
-#   $LastChangedBy: s0undt3ch $
-# =============================================================================
-# Copyright (C) 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
+# vim: sw=4 ts=4 fenc=utf-8 et
+# ==============================================================================
+# Copyright © 2008 UfSoft.org - Pedro Algarvio <ufs@ufsoft.org>
 #
 # Please view LICENSE for additional licensing information.
-# =============================================================================
+# ==============================================================================
 
 from trac.core import Component, implements
 from trac.admin import IAdminPanelProvider
@@ -19,11 +12,10 @@ from trac.config import Option,  _TRUE_VALUES
 from trac.util.text import unicode_unquote
 from trac.web.chrome import add_stylesheet
 
-class AdsAdminPanel(Component):
+class GoogleAdsAdmin(Component):
+    config = env = log = None # make pylint happy
     implements(IAdminPanelProvider)
-
-    def __init__(self):
-        self.options = {}
+    options = {}
 
     # IAdminPanelProvider methods
     def get_admin_panels(self, req):
@@ -73,9 +65,7 @@ class AdsAdminPanel(Component):
                 code = cursor.fetchone()
                 if code:
                     code = unicode_unquote(code[0])
-                else:
-                    code = ''
-                option.value = code
+                option.value = code or  ''
             else:
                 option.value = self.config.get('google.ads', option.name,
                                                option.default)
