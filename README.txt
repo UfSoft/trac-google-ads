@@ -1,12 +1,15 @@
 TracGoogleAds
 =============
 
-TracGoogleAds_ is of course a trac_ plugin designed to display ads on your
-trac_ environment.
+Previously known as `Trac Ads Panel`_, TracGoogleAds_ is a trac_ plugin designed
+to display ads on your trac_ environment.
 
 The main feature of the plugin is that it allows the user to persistently_
 hide the ads, making your trac_ environment less annoying to those who
 dislike ads and supporting open-source projects through them.
+
+*Plugin has been renamed and package hierarchy has changed to join*
+`other trac plugins`_ *that addressed* Google_ *services.*
 
 Installation
 ------------
@@ -54,3 +57,6 @@ If you wish to be on the bleeding edge and get the latest available code:
 
 .. _trac: http://trac.edgewall.org
 .. _TracGoogleAds: http://google.ufsoft.org/wiki/TracGoogleAds
+.. _other trac plugins: http://google.ufsoft.org/
+.. _Google: http://www.google.com
+.. _Trac Ads Panel: http://devnull.ufsoft.org/wiki/TracAdsPanel
