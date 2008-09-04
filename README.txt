@@ -42,7 +42,7 @@ Source Code
 
 If you wish to be on the bleeding edge and get the latest available code:
 
-.. sourcecode:: ini
+.. sourcecode:: sh
 
   hg clone http://google.ufsoft.org/hg/ads/ TracGoogleAds
 
